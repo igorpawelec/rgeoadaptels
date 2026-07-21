@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+src/*.o
+src/*.so
+src/*.dll
+*.tar.gz
+*.Rcheck/
+
+# Written by tools/generate_plgeoadaptels_reference.py; regenerated on
+# demand and in CI, never committed.
+tools/reference/

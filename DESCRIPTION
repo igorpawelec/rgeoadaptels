@@ -1,0 +1,23 @@
+Package: rgeoadaptels
+Type: Package
+Title: Scale-Adaptive Superpixels for Geospatial Raster Data
+Version: 0.1.0
+Authors@R: person("Igor", "Pawelec", email = "igor.pawelec@urk.edu.pl",
+                  role = c("aut", "cre"),
+                  comment = c(ORCID = "0009-0005-9798-3596"))
+Description: Segments a raster into scale-adaptive superpixels, or adaptels.
+    Regions grow from a seed until their internal distance passes a
+    threshold and the pixels beyond it become seeds in turn, so the number
+    of segments follows the scene instead of being fixed in advance.
+    Minkowski, cosine and angular distances are provided, each on its own
+    scale. Written in R and plain C with no compiled dependencies and no
+    required packages. Methods follow Achanta and others (2018)
+    <doi:10.2352/ISSN.2169-2629.2018.26.14>.
+License: GPL-3
+Encoding: UTF-8
+Depends: R (>= 3.6.0)
+Suggests: terra
+URL: https://github.com/igorpawelec/rgeoadaptels
+BugReports: https://github.com/igorpawelec/rgeoadaptels/issues
+RoxygenNote: 8.0.0
+NeedsCompilation: yes
