@@ -1,0 +1,108 @@
+# R CMD check across the platforms CRAN builds on, plus the cross-check
+# against plGeoAdaptels.
+#
+# The package compiles C, so the matrix is about compiler and R-version
+# drift as well as dependencies. oldrel-1 is here because DESCRIPTION
+# declares R (>= 3.6.0) and nothing else would catch a newer base function
+# slipping in.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+name: R-CMD-check
+
+permissions: read-all
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: macos-latest,   r: 'release'}
+          - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
+          - {os: ubuntu-latest,  r: 'release'}
+          - {os: ubuntu-latest,  r: 'oldrel-1'}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Without pandoc, `checking top-level files` NOTEs on README.md and
+      # NEWS.md, which the package does ship.
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          # --no-manual skips the PDF manual, which needs a LaTeX install.
+          # That is a real CRAN check and it is NOT covered here: run
+          # `R CMD check --as-cran` locally with LaTeX before submitting.
+          args: 'c("--no-manual", "--as-cran")'
+          build_args: 'c("--no-manual")'
+          # NOTEs do not fail: a first submission always NOTEs
+          # "New submission", and there is no way to satisfy it.
+          error-on: '"warning"'
+          upload-snapshots: true
+
+  identical-to-plgeoadaptels:
+    # An equality check, not a tolerance. This is a port of the same kernel,
+    # so a single differing pixel is a bug rather than a difference of
+    # opinion, and the script exits non-zero on one.
+    runs-on: ubuntu-latest
+    name: identical to plGeoAdaptels
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          needs: check
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install plGeoAdaptels
+        # From git, not PyPI: plGeoAdaptels is not published yet. Switch to
+        # `pip install plgeoadaptels` once it is, so the comparison runs
+        # against a release rather than the tip of main.
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "plgeoadaptels @ git+https://github.com/igorpawelec/plGeoAdaptels.git"
+
+      - name: Install rgeoadaptels
+        run: R CMD INSTALL .
+
+      - name: Generate reference segmentations
+        run: python tools/generate_plgeoadaptels_reference.py
+
+      - name: Compare
+        run: Rscript tools/cross_validate_against_plgeoadaptels.R
