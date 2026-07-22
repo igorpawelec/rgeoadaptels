@@ -107,6 +107,10 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install "plgeoadaptels[connectivity] @ git+https://github.com/igorpawelec/plGeoAdaptels.git"
 
+      - name: Check the version declarations agree
+        # CITATION.cff is .Rbuildignore'd, so R CMD check never sees it.
+        run: Rscript tools/check_versions.R
+
       - name: Install rgeoadaptels
         run: R CMD INSTALL .
 
