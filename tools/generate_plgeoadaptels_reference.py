@@ -18,6 +18,7 @@ import os
 
 import numpy as np
 from plgeoadaptels import adaptels_from_array, enforce_connectivity
+from plgeoadaptels.sicle import sicle_from_array
 
 OUT = os.path.join("tools", "reference")
 os.makedirs(OUT, exist_ok=True)
@@ -78,6 +79,52 @@ for ms in (0, 5, 20):
                fmt="%d")
     lines.append("conn%d,conn,%d" % (ms, n))
     print("  conn min_size=%-2d        -> %d adaptels" % (ms, n))
+
+# ── SICLE ────────────────────────────────────────────────────────────
+#
+# Seeds are written out and handed to both implementations. NumPy's
+# Generator.choice cannot be reproduced outside NumPy, so the sampler stays
+# out of the comparison and the algorithm stays in it. plGeoAdaptels grew a
+# `seeds` argument in 0.6.0 for exactly this.
+sicle_rng = np.random.default_rng(23)
+sc = SCENES["multi"]
+n_pix = sc.shape[1] * sc.shape[2]
+flat = sicle_rng.choice(np.arange(n_pix), size=700, replace=False)
+SEEDS = np.stack([flat // sc.shape[2], flat % sc.shape[2]], axis=1)
+np.savetxt(os.path.join(OUT, "sicle_seeds.csv"), SEEDS, delimiter=",", fmt="%d")
+
+# A saliency map with a NaN-free interior; nodata in saliency is rejected by
+# both sides, and that rejection is tested in the unit suites rather than here.
+sal = np.zeros(sc.shape[1:], dtype=np.float64)
+sal[10:25, 15:35] = 1.0
+sal[26:30, 5:12] = 0.5
+np.savetxt(os.path.join(OUT, "sicle_saliency.csv"), sal, delimiter=",",
+           fmt="%.17g")
+
+SICLE_CASES = [
+    ("s_it2", dict(n_segments=60, n_iterations=2)),
+    ("s_it5", dict(n_segments=60, n_iterations=5)),
+    ("s_it10", dict(n_segments=60, n_iterations=10)),
+    ("s_many", dict(n_segments=200, n_iterations=2)),
+    ("s_few", dict(n_segments=5, n_iterations=2)),
+    ("s_sal", dict(n_segments=60, n_iterations=2, saliency=sal)),
+    ("s_mask", dict(n_segments=60, n_iterations=2, mask=mask)),
+]
+for tag, kw in SICLE_CASES:
+    kw = dict(kw)
+    seeds = SEEDS
+    if "mask" in kw:
+        # Drop seeds that land on nodata; both sides reject them, and the
+        # point here is the algorithm, not the validation.
+        keep = kw["mask"][SEEDS[:, 0], SEEDS[:, 1]] == 0
+        seeds = SEEDS[keep]
+        np.savetxt(os.path.join(OUT, "sicle_seeds_masked.csv"), seeds,
+                   delimiter=",", fmt="%d")
+    labels, n = sicle_from_array(sc, seeds=seeds, quiet=True, **kw)
+    np.savetxt(os.path.join(OUT, "out_%s.csv" % tag), labels, delimiter=",",
+               fmt="%d")
+    lines.append("%s,sicle,%d" % (tag, n))
+    print("  %-11s sicle   -> %d superpixels" % (tag, n))
 
 for name, arr in SCENES.items():
     for l in range(arr.shape[0]):

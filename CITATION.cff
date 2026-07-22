@@ -10,7 +10,7 @@ authors:
     orcid: "https://orcid.org/0009-0005-9798-3596"
 repository-code: "https://github.com/igorpawelec/rgeoadaptels"
 license: GPL-3.0-or-later
-version: "0.1.0"
+version: "0.2.0"
 date-released: "2026-07-21"
 keywords:
   - superpixels
@@ -31,7 +31,6 @@ references:
         given-names: Sabine
     journal: "Color and Imaging Conference (CIC26)"
     year: 2018
-    doi: 10.2352/ISSN.2169-2629.2018.26.14
   - type: software
     title: "plGeoAdaptels (original C implementation)"
     authors:
