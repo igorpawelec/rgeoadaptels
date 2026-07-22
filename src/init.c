@@ -9,10 +9,14 @@
 
 extern SEXP C_create_adaptels(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP C_enforce_connectivity(SEXP, SEXP, SEXP, SEXP);
+extern SEXP C_ift_fmax(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP C_seed_relevance(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"create_adaptels", (DL_FUNC) &C_create_adaptels, 8},
     {"enforce_connectivity", (DL_FUNC) &C_enforce_connectivity, 4},
+    {"ift_fmax", (DL_FUNC) &C_ift_fmax, 5},
+    {"seed_relevance", (DL_FUNC) &C_seed_relevance, 8},
     {NULL, NULL, 0}
 };
 
