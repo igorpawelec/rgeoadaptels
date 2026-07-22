@@ -78,6 +78,18 @@ artefact of iteration order, so a renumbering reads as a 98 % difference when
 nothing moved. Match regions by best overlap first; this has produced a false
 alarm in this family three separate times.
 
+## The pinned twin
+
+The agreement job installs plGeoAdaptels from a **tag**, not the tip of its main
+branch — see `.github/workflows/R-CMD-check.yaml`. Unpinned, a commit in
+plGeoAdaptels could turn this repository's CI red without anything changing here,
+and the failure would read as a defect in this package.
+
+The cost is that the pin goes stale. When plGeoAdaptels releases and the segmentation
+changes, bump the tag in the workflow and re-run the agreement job. A stale
+pin proves agreement against an old plGeoAdaptels, which is quieter than a red
+build and therefore worse.
+
 ## Pull requests
 
 - Add a test that fails before your change and passes after. Confirm it fails
