@@ -91,9 +91,20 @@ jobs:
           python-version: '3.12'
 
       - name: Install plGeoAdaptels
-        # From git, not PyPI: plGeoAdaptels is not published yet. Switch to
-        # `pip install plgeoadaptels[connectivity]` once it is, so the
-        # comparison runs against a release rather than the tip of main.
+        # Pinned to a tag, not the tip of main. Unpinned, a commit in
+        # plGeoAdaptels could turn this job red without anything changing
+        # here, and the failure would look like a defect in rgeoadaptels.
+        # This pair is bit-identical, so the job is unusually sensitive:
+        # any upstream change to the growing shows up as a hard failure.
+        #
+        # BUMP THIS when plGeoAdaptels releases and the segmentation
+        # changes. A stale pin proves the agreement against an old
+        # plGeoAdaptels, which is quieter than a red build: see
+        # CONTRIBUTING.md.
+        #
+        # From git rather than PyPI because plGeoAdaptels is not published;
+        # `pip install plgeoadaptels[connectivity]==0.8.0` replaces this
+        # once it is.
         #
         # The [connectivity] extra is scipy, and it is needed because the
         # reference generator calls enforce_connectivity(). scipy is
@@ -105,7 +116,7 @@ jobs:
         # case and then fail on the first connectivity one.
         run: |
           python -m pip install --upgrade pip
-          python -m pip install "plgeoadaptels[connectivity] @ git+https://github.com/igorpawelec/plGeoAdaptels.git"
+          python -m pip install "plgeoadaptels[connectivity] @ git+https://github.com/igorpawelec/plGeoAdaptels.git@v0.8.0"
 
       - name: Check the version declarations agree
         # CITATION.cff is .Rbuildignore'd, so R CMD check never sees it.
