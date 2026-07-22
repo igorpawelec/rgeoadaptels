@@ -92,11 +92,20 @@ jobs:
 
       - name: Install plGeoAdaptels
         # From git, not PyPI: plGeoAdaptels is not published yet. Switch to
-        # `pip install plgeoadaptels` once it is, so the comparison runs
-        # against a release rather than the tip of main.
+        # `pip install plgeoadaptels[connectivity]` once it is, so the
+        # comparison runs against a release rather than the tip of main.
+        #
+        # The [connectivity] extra is scipy, and it is needed because the
+        # reference generator calls enforce_connectivity(). scipy is
+        # genuinely optional for the rest of that package -- it is imported
+        # inside the one function that uses it, which raises a clear
+        # ImportError naming the extra -- so asking for it here is the
+        # caller's job, not something to fix upstream. Do not drop it back
+        # to a bare install; the generator will get through every adaptel
+        # case and then fail on the first connectivity one.
         run: |
           python -m pip install --upgrade pip
-          python -m pip install "plgeoadaptels @ git+https://github.com/igorpawelec/plGeoAdaptels.git"
+          python -m pip install "plgeoadaptels[connectivity] @ git+https://github.com/igorpawelec/plGeoAdaptels.git"
 
       - name: Install rgeoadaptels
         run: R CMD INSTALL .
