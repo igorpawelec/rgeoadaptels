@@ -1,5 +1,7 @@
 # rgeoadaptels
 
+<img src="https://raw.githubusercontent.com/igorpawelec/pyhrg/main/www/rgeoadaptels.png" alt="rgeoadaptels logo" align="right" width="200"/>
+
 [![R-CMD-check](https://github.com/igorpawelec/rgeoadaptels/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/igorpawelec/rgeoadaptels/actions/workflows/R-CMD-check.yaml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![R](https://img.shields.io/badge/R-%3E%3D%203.6-blue.svg)](https://www.r-project.org)
