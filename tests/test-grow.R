@@ -203,6 +203,27 @@ if (requireNamespace("terra", quietly = TRUE)) {
   seg3 <- grow_seeds_raster(r, xy, quiet = TRUE)
   ok(identical(seg3$labels, seg$labels),
      "a plain (x, y) matrix matches the SpatVector")
+
+  # sf and sfc inherit from data.frame, so the spatial classes have to be
+  # tested before the matrix branch. Tested the other way round an sf layer
+  # took the matrix path, which failed with a confusing message about column
+  # counts -- and, for a frame that really does hold x/y columns, would have
+  # read them as already being in the raster's CRS, skipping the reprojection.
+  if (requireNamespace("sf", quietly = TRUE)) {
+    cat("sf layers take the spatial path, not the matrix one\n")
+    pts_sf <- sf::st_as_sf(data.frame(x = xy[, 1], y = xy[, 2]),
+                           coords = c("x", "y"), crs = 2180)
+    ok(inherits(pts_sf, "data.frame"),
+       "the premise: an sf object *is* a data.frame")
+    seg_sf <- grow_seeds_raster(r, pts_sf, quiet = TRUE)
+    ok(identical(seg_sf$labels, seg$labels),
+       "sf in the raster CRS matches the SpatVector")
+    seg_84 <- grow_seeds_raster(r, sf::st_transform(pts_sf, 4326), quiet = TRUE)
+    ok(identical(seg_84$labels, seg$labels),
+       "sf in EPSG:4326 is reprojected to the same pixels")
+  } else {
+    cat("sf not installed -- skipping the sf routing tests\n")
+  }
 } else {
   cat("terra not installed -- skipping grow_seeds_raster tests\n")
 }

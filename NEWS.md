@@ -1,5 +1,22 @@
 # rgeoadaptels 0.2.0
 
+# rgeoadaptels 0.3.1
+
+## Fixed
+
+* **An `sf` point layer passed to `grow_seeds_raster()` failed with a confusing
+  message about column counts.** `sf` and `sfc` inherit from `data.frame`, so
+  they matched the matrix branch before the spatial one, and their geometry
+  list-column was read as coordinates -- "got 1 column(s)". The spatial classes
+  are now tested first.
+
+  The ordering is not cosmetic. The matrix branch has no CRS, so it takes
+  coordinates on faith as already being in the raster's system; the spatial
+  branch reprojects and says so. A frame that genuinely held x/y columns in
+  another system would have been read silently wrong, which is the worst kind
+  of wrong. `?grow_seeds_raster` now states that plainly.
+
+
 # rgeoadaptels 0.3.0
 
 ## Added

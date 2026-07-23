@@ -301,10 +301,15 @@ grow_seeds <- function(data, seeds, mask = NULL, max_cost = NULL,
 #'
 #' @param input A `SpatRaster`, a path, or several paths taken as bands. Feed
 #'   the bands the growth should see (RGB, CIELAB, an index), prepared upstream.
-#' @param points A `SpatVector` of points, a path to any OGR-readable point
-#'   layer, or a two-column matrix of `(x, y)` map coordinates already in the
-#'   raster CRS. A layer whose CRS differs from the raster's is reprojected,
-#'   and that is reported unless `quiet` -- never assumed.
+#' @param points A `SpatVector`, an `sf`/`sfc` point layer, a path to any
+#'   OGR-readable point layer, or a two-column matrix of `(x, y)` map
+#'   coordinates.
+#'
+#'   The first three carry a CRS: one that differs from the raster's is
+#'   reprojected, and that is reported unless `quiet` -- never assumed.
+#'   **The matrix form has no CRS**, so its coordinates are taken on faith as
+#'   already being in the raster's system. Prefer a real point layer whenever
+#'   you have one; the matrix is for coordinates you have already placed.
 #' @param output Path for the `int32` label raster (`-1` = unassigned, set as
 #'   its NA value). `NULL` writes none.
 #' @param polygons Path for crown polygons; the format follows the extension
@@ -330,13 +335,30 @@ grow_seeds_raster <- function(input, points, output = NULL, polygons = NULL,
   x0 <- terra::xmin(tmpl); y0 <- terra::ymax(tmpl)
   w <- terra::xres(tmpl);  h <- terra::yres(tmpl)
 
-  if (is.matrix(points) || is.data.frame(points)) {
+  # The spatial classes are tested BEFORE the matrix branch, because `sf` and
+  # `sfc` inherit from data.frame. Tested the other way round an sf layer takes
+  # the matrix path, and the matrix path is not merely a different route to the
+  # same answer: it reads the coordinates on faith as already being in the
+  # raster's CRS, skipping the reprojection and the message below. For a frame
+  # that genuinely holds x/y columns in another system that is a silent wrong
+  # answer, which is the worst kind.
+  v <- NULL
+  if (inherits(points, "SpatVector")) {
+    v <- points
+  } else if (inherits(points, c("sf", "sfc"))) {
+    v <- terra::vect(points)
+  } else if (is.matrix(points) || is.data.frame(points)) {
     xy <- as.matrix(points)
     if (ncol(xy) != 2L)
-      stop("points matrix must be (n, 2) of (x, y) map coordinates in the ",
-           "raster CRS", call. = FALSE)
+      stop("points must be an (n, 2) matrix of (x, y) map coordinates already ",
+           "in the raster CRS, or an sf/SpatVector point layer (which carries ",
+           "its own CRS and is reprojected for you); got ", ncol(xy),
+           " column(s)", call. = FALSE)
   } else {
-    v <- if (inherits(points, "SpatVector")) points else terra::vect(points)
+    v <- terra::vect(points)                      # a path to a vector file
+  }
+
+  if (!is.null(v)) {
     if (terra::geomtype(v) != "points")
       stop("grow_seeds needs a point layer; got ", terra::geomtype(v),
            ". Digitise the objects as points.", call. = FALSE)
