@@ -79,6 +79,57 @@ split <- enforce_connectivity(seg$labels)     # every region now contiguous
 
 Not applied automatically, because it changes the adaptel count.
 
+## SICLE superpixels
+
+`adaptels` lets the scene decide the count; `sicle` lets you set it. It starts
+from far more seeds than you want, grows an optimum-path forest, scores every
+seed and discards the least relevant, and repeats until `n_segments` remain.
+
+```r
+seg <- sicle(data, n_segments = 200)
+seg$labels            # 0-based ids, each a single 8-connected region
+seg$n_superpixels
+```
+
+Seeds can be given instead of sampled. That is what lets the two twins be
+compared on the algorithm rather than the sampler — `NumPy`'s `Generator.choice`
+cannot be reproduced outside NumPy, so the sampling is kept out of the
+comparison:
+
+```r
+sicle(data, seeds = cbind(rows, cols), n_segments = 200)   # 1-based (row, col)
+```
+
+`n_iterations` does less than it looks: the paper's preservation curve makes 3
+bit-identical to 2. See `?sicle` for why, and why 2 is a speed setting rather
+than a quality one.
+
+## grow_seeds — seeded region growing
+
+The inverse of `adaptels` and `sicle`. Rather than partition the whole image,
+you supply points and each grows into the region that looks like the pixel it
+sits on; everything unseeded stays `-1`. Built to delineate standing dead trees
+from a hand-digitised point layer — the operator supplies the objects, the
+algorithm supplies their boundaries.
+
+```r
+grow_seeds_raster("ortho_lab.tif", "dead_trees.shp",
+                  output = "labels.tif", polygons = "crowns.gpkg",
+                  max_cost = 15, band_weights = c(0.5, 2.5, 1),
+                  max_radius = 20, fill_holes = TRUE)
+```
+
+`max_cost` is a tolerance in the band units — a ΔE tolerance when the input is
+CIELAB, so feed Lab, not RGB. `band_weights` reshapes the feature space
+(weighting `a*` up separates dead brown from living green); `max_radius` bounds
+the reach; `fill_holes` closes the pockets a cut leaves inside a crown. Label
+`i` is the region grown from the i-th point, so it joins back to that point's
+attributes. `docs/grow_seeds_guide.md` is the operator's guide, with a worked
+recipe for dead trees.
+
+It runs on the same frozen IFT kernel as `sicle`, which is what keeps it
+bit-identical to the Python twin.
+
 ## Agreement with plGeoAdaptels
 
 Bit-identical, and checked rather than asserted:
@@ -89,12 +140,15 @@ python3 tools/generate_plgeoadaptels_reference.py
 Rscript tools/cross_validate_against_plgeoadaptels.R
 ```
 
-Thirteen cases — every metric, both connectivities, a non-default Minkowski
-exponent, the normalise path, a mask with an interior hole, single- and
-multi-band input, a constant raster, and `enforce_connectivity` at three
-`min_size` values. Zero differing pixels in all of them. The real 400x400
-three-band scene in the plGeoAdaptels repository was checked the same way
-locally; it is not shipped here.
+Thirty cases across all three algorithms — every adaptels metric and both
+connectivities, a non-default Minkowski exponent, the normalise path, a mask
+with an interior hole, single- and multi-band input, a constant raster,
+`enforce_connectivity` at three `min_size` values, SICLE across its parameters
+and a saliency map, and `grow_seeds` across every option including the
+`fill_holes` cleanup. Zero differing pixels in all of them. The real 400x400
+three-band scene in the plGeoAdaptels repository — and the CIELAB dead-tree
+ortho with 36 hand-placed points — were checked the same way locally; they are
+not shipped here.
 
 The check is an **equality**, not a tolerance, and that is worth a note
 because the other twin pairs in this family could not manage it. rHRG
@@ -119,7 +173,7 @@ Three details make that possible, and all three are easy to get wrong:
 ## Citation
 
 Pawelec, I. (2026). *rgeoadaptels: Scale-Adaptive Superpixels for Geospatial
-Raster Data*. R package version 0.1.0.
+Raster Data*. R package version 0.3.0.
 https://github.com/igorpawelec/rgeoadaptels
 
 Machine-readable metadata is in [`CITATION.cff`](CITATION.cff).
