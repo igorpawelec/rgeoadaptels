@@ -1,5 +1,30 @@
 # rgeoadaptels 0.2.0
 
+# rgeoadaptels 0.3.0
+
+## Added
+
+* **`grow_seeds` / `grow_seeds_raster`: seeded spectral region growing
+  ("inverse OBIA").** Each operator-placed point is grown into the region that
+  looks like the pixel it sits on; everything unseeded is left unassigned
+  (`-1`). The inverse of `adaptels()`/`sicle()`, built to delineate standing
+  dead trees from a hand-digitised point layer.
+
+  It calls the SICLE IFT kernel (`C_ift_fmax`) once, with every seed, and
+  never removes one, so `labels == i` is the region grown from the i-th point.
+  Options: `max_cost` (a ΔE tolerance on CIELAB input), `band_weights`,
+  `compactness`, `seed_window`, `max_radius`, `fill_holes`. The kernel is
+  unchanged, so this is the R twin of plGeoAdaptels' `grow_seeds`; the two are
+  bit-identical on 30 cases in `tools/cross_validate_against_plgeoadaptels.R`.
+  The cleanup helpers (`fill_holes`) are pure R, matching scipy on the Python
+  side. `grow_seeds_raster` reads any terra-readable point layer, reprojects
+  it when needed, and writes a label raster plus crown polygons. See
+  `docs/grow_seeds_guide.md`.
+
+* The cross-check now pins plGeoAdaptels to `v0.9.0`, the release that adds
+  `grow_seeds`.
+
+
 * **`sicle()`** -- Superpixels through Iterative CLEarcutting. Oversample
   seeds, grow an optimum-path forest with the `fmax` path-cost and the
   `wroot` arc-cost, score every seed, discard the least relevant, repeat.
