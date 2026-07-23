@@ -10,7 +10,7 @@ authors:
     orcid: "https://orcid.org/0009-0005-9798-3596"
 repository-code: "https://github.com/igorpawelec/rgeoadaptels"
 license: GPL-3.0-or-later
-version: "0.3.0"
+version: "0.3.1"
 date-released: "2026-07-21"
 keywords:
   - superpixels

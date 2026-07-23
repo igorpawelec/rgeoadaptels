@@ -17,10 +17,15 @@ grow_seeds_raster(
 \item{input}{A `SpatRaster`, a path, or several paths taken as bands. Feed
 the bands the growth should see (RGB, CIELAB, an index), prepared upstream.}
 
-\item{points}{A `SpatVector` of points, a path to any OGR-readable point
-layer, or a two-column matrix of `(x, y)` map coordinates already in the
-raster CRS. A layer whose CRS differs from the raster's is reprojected,
-and that is reported unless `quiet` -- never assumed.}
+\item{points}{A `SpatVector`, an `sf`/`sfc` point layer, a path to any
+  OGR-readable point layer, or a two-column matrix of `(x, y)` map
+  coordinates.
+
+  The first three carry a CRS: one that differs from the raster's is
+  reprojected, and that is reported unless `quiet` -- never assumed.
+  **The matrix form has no CRS**, so its coordinates are taken on faith as
+  already being in the raster's system. Prefer a real point layer whenever
+  you have one; the matrix is for coordinates you have already placed.}
 
 \item{output}{Path for the `int32` label raster (`-1` = unassigned, set as
 its NA value). `NULL` writes none.}
