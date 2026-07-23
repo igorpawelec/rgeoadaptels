@@ -9,3 +9,5 @@
 ^LICENSE$
 ^CONTRIBUTING\.md$
 ^www$
+^docs$
+^test_data$

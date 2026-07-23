@@ -3,6 +3,8 @@
 export(adaptels)
 export(adaptels_raster)
 export(enforce_connectivity)
+export(grow_seeds)
+export(grow_seeds_raster)
 export(read_bands)
 export(sicle)
 useDynLib(rgeoadaptels, .registration = TRUE, .fixes = "C_")

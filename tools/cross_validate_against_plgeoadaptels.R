@@ -126,8 +126,51 @@ for (ms in c(0, 5, 20)) {
               got$n_adaptels, n_py, same, ndiff))
 }
 
+# ── grow_seeds ────────────────────────────────────────────────────────
+#
+# The seeds are the same 0-based (row, col) set the Python side used; the +1
+# crosses to R's 1-based convention. Every wrapper option is exercised, and
+# the last case turns them all on at once. Bit-identical or it is a bug --
+# there is no second kernel here to legitimately disagree.
+grow_seeds_pts <- rd("grow_seeds_pts.csv") + 1L
+
+GROW_CASES <- list(
+  g_plain   = quote(grow_seeds(d, grow_seeds_pts, quiet = TRUE)),
+  g_cost    = quote(grow_seeds(d, grow_seeds_pts, max_cost = 40, quiet = TRUE)),
+  g_compact = quote(grow_seeds(d, grow_seeds_pts, compactness = 0.5,
+                               quiet = TRUE)),
+  g_weights = quote(grow_seeds(d, grow_seeds_pts, band_weights = c(2, 1, 0.5),
+                               quiet = TRUE)),
+  g_window  = quote(grow_seeds(d, grow_seeds_pts, seed_window = 3,
+                               quiet = TRUE)),
+  g_radius  = quote(grow_seeds(d, grow_seeds_pts, max_radius = 8, quiet = TRUE)),
+  g_mask    = quote(grow_seeds(d, grow_seeds_pts, mask = mask, quiet = TRUE)),
+  g_all     = quote(grow_seeds(d, grow_seeds_pts, max_cost = 60,
+                               compactness = 0.3, band_weights = c(1.5, 1, 0.5),
+                               seed_window = 3, max_radius = 12, quiet = TRUE)),
+  g_fill    = quote(grow_seeds(d, grow_seeds_pts, max_cost = 40,
+                               fill_holes = TRUE, quiet = TRUE)),
+  g_clean   = quote(grow_seeds(d, grow_seeds_pts, max_cost = 60,
+                               compactness = 0.3, band_weights = c(1.5, 1, 0.5),
+                               seed_window = 3, max_radius = 12,
+                               fill_holes = TRUE, quiet = TRUE))
+)
+
+for (tag in names(GROW_CASES)) {
+  got <- eval(GROW_CASES[[tag]])
+  ref <- rd(sprintf("out_%s.csv", tag))
+  n_py <- cases$n[cases$tag == tag]
+  same <- identical(as.vector(got$labels), as.vector(ref)) &&
+    identical(got$n_segments, n_py)
+  ndiff <- sum(got$labels != ref)
+  if (!same) bad <- bad + 1L
+  cat(sprintf("%-11s %8d %8d %10s %10d\n", tag, got$n_segments, n_py,
+              same, ndiff))
+}
+
 cat(strrep("-", 52), "\n")
 if (bad > 0L)
   stop(bad, " case(s) differ from plGeoAdaptels", call. = FALSE)
 cat("rgeoadaptels == plGeoAdaptels, bit for bit, on all ",
-    length(CASES) + length(SICLE_CASES) + 3L, " cases.\n", sep = "")
+    length(CASES) + length(SICLE_CASES) + 3L + length(GROW_CASES), " cases.\n",
+    sep = "")

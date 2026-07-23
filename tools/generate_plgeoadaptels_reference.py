@@ -126,6 +126,52 @@ for tag, kw in SICLE_CASES:
     lines.append("%s,sicle,%d" % (tag, n))
     print("  %-11s sicle   -> %d superpixels" % (tag, n))
 
+# ── grow_seeds ───────────────────────────────────────────────────────
+#
+# Seeded region growing. The whole design is a thin wrapper over the same
+# _ift_fmax the SICLE cases above already exercise, so the value here is in
+# the wrapper: max_cost, band weights, the compactness coordinate bands, the
+# seed-window median and the radius cap, each of which is prepared into or
+# read out of that one kernel call and each of which is a place R and Python
+# can drift. Seeds are drawn from the *valid* pixels of the mask, so the same
+# set is legal with and without it, and are 0-based (row, col) -- the R side
+# adds one.
+from plgeoadaptels.grow import grow_seeds
+
+grow_rng = np.random.default_rng(29)
+valid_flat = np.where(mask.ravel() == 0)[0]
+gflat = grow_rng.choice(valid_flat, size=25, replace=False)
+GSEEDS = np.stack([gflat // sc.shape[2], gflat % sc.shape[2]], axis=1)
+np.savetxt(os.path.join(OUT, "grow_seeds_pts.csv"), GSEEDS, delimiter=",",
+           fmt="%d")
+
+GROW_CASES = [
+    ("g_plain", dict()),
+    ("g_cost", dict(max_cost=40.0)),
+    ("g_compact", dict(compactness=0.5)),
+    ("g_weights", dict(band_weights=[2.0, 1.0, 0.5])),
+    ("g_window", dict(seed_window=3)),
+    ("g_radius", dict(max_radius=8.0)),
+    ("g_mask", dict(mask=mask)),
+    # Everything at once: if any single prep step drifts, this is where it
+    # shows, because they compose.
+    ("g_all", dict(max_cost=60.0, compactness=0.3,
+                   band_weights=[1.5, 1.0, 0.5], seed_window=3,
+                   max_radius=12.0)),
+    # Cleanup post-processing (fill_holes). scipy on the Python side, pure R
+    # on the other, so bit-identical here checks the two implementations agree.
+    ("g_fill", dict(max_cost=40.0, fill_holes=True)),
+    ("g_clean", dict(max_cost=60.0, compactness=0.3,
+                     band_weights=[1.5, 1.0, 0.5], seed_window=3,
+                     max_radius=12.0, fill_holes=True)),
+]
+for tag, kw in GROW_CASES:
+    labels = grow_seeds(sc, GSEEDS, quiet=True, **kw)
+    np.savetxt(os.path.join(OUT, "out_%s.csv" % tag), labels, delimiter=",",
+               fmt="%d")
+    lines.append("%s,grow,%d" % (tag, len(GSEEDS)))
+    print("  %-11s grow    -> %d px assigned" % (tag, int((labels >= 0).sum())))
+
 for name, arr in SCENES.items():
     for l in range(arr.shape[0]):
         np.savetxt(os.path.join(OUT, "%s_band%d.csv" % (name, l)), arr[l],

@@ -11,3 +11,4 @@ src/*.dll
 # Written by tools/generate_plgeoadaptels_reference.py; regenerated on
 # demand and in CI, never committed.
 tools/reference/
+*.aux.xml
