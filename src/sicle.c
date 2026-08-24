@@ -7,16 +7,16 @@
  *
  * Two kernels live here; the iteration that drives them -- the seed
  * preservation curve and the relevance ranking -- is plain R, mirroring
- * how plGeoAdaptels leaves that part to Python. It runs a handful of times
+ * how pygeoadaptels leaves that part to Python. It runs a handful of times
  * per segmentation, not once per pixel.
  *
  * The seeds arrive from the caller and are never drawn here. NumPy's
  * Generator.choice cannot be reproduced outside NumPy, and reimplementing
  * an undocumented ordering detail of a third-party library is what left
- * rHRG disagreeing with scikit-image's watershed on 0.25% of pixels.
+ * rcacumen disagreeing with scikit-image's watershed on 0.25% of pixels.
  * Belem et al. treat the sampling as a free choice, so it is not part of
  * the algorithm; keeping it out of here is what lets the algorithm be
- * compared against plGeoAdaptels for equality.
+ * compared against pygeoadaptels for equality.
  *
  * Copyright (C) 2026 Igor Pawelec. Licence: GPLv3.
  */
@@ -171,7 +171,7 @@ SEXP C_seed_relevance(SEXP s_layers, SEXP s_mask, SEXP s_cols, SEXP s_rows,
     }
 
     /* 8-adjacency, matching the forest. Belem et al. define tree adjacency
-     * over the same arc set the IFT grows on. plGeoAdaptels scanned four
+     * over the same arc set the IFT grows on. pygeoadaptels scanned four
      * neighbours here until 0.4.0, so a tree touching its only neighbour
      * diagonally was found to have none: its minimum contrast stayed at the
      * sentinel, collapsed to 0 below, and the seed was removed first on no

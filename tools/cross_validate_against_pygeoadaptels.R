@@ -1,16 +1,16 @@
-# Prove rgeoadaptels and plGeoAdaptels produce the same segmentation.
+# Prove rgeoadaptels and pygeoadaptels produce the same segmentation.
 #
 # This is an equality check, not a tolerance, and deliberately so. The twin
-# packages in this family had to settle for tolerances: rHRG reimplements
+# packages in this family had to settle for tolerances: rcacumen reimplements
 # scikit-image's watershed and differs on 0.25% of pixels where plateau ties
-# fall differently, and GeoPaletteR computes in double where GeoPalette
+# fall differently, and rgeopalette computes in double where pygeopalette
 # stores single precision. Neither applies here. This is a port of the same
 # kernel — same heap, same neighbour order, same arithmetic — with no second
 # implementation to disagree with, so anything short of bit-identical is a
 # bug rather than a difference of opinion.
 #
-#   python3 tools/generate_plgeoadaptels_reference.py
-#   Rscript tools/cross_validate_against_plgeoadaptels.R
+#   python3 tools/generate_pygeoadaptels_reference.py
+#   Rscript tools/cross_validate_against_pygeoadaptels.R
 #
 # Copyright (C) 2026 Igor Pawelec. Licence: GPLv3.
 
@@ -18,7 +18,7 @@ library(rgeoadaptels)
 
 dir <- file.path("tools", "reference")
 if (!dir.exists(dir))
-  stop("run tools/generate_plgeoadaptels_reference.py first", call. = FALSE)
+  stop("run tools/generate_pygeoadaptels_reference.py first", call. = FALSE)
 
 rd <- function(f) as.matrix(utils::read.csv(file.path(dir, f), header = FALSE))
 
@@ -170,7 +170,7 @@ for (tag in names(GROW_CASES)) {
 
 cat(strrep("-", 52), "\n")
 if (bad > 0L)
-  stop(bad, " case(s) differ from plGeoAdaptels", call. = FALSE)
-cat("rgeoadaptels == plGeoAdaptels, bit for bit, on all ",
+  stop(bad, " case(s) differ from pygeoadaptels", call. = FALSE)
+cat("rgeoadaptels == pygeoadaptels, bit for bit, on all ",
     length(CASES) + length(SICLE_CASES) + 3L + length(GROW_CASES), " cases.\n",
     sep = "")

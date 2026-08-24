@@ -1,7 +1,7 @@
 # Plain-R tests: any error fails R CMD check. No testthat dependency, so the
 # package stays free of test-only requirements.
 #
-# These do not compare against plGeoAdaptels — that needs Python and lives in
+# These do not compare against pygeoadaptels — that needs Python and lives in
 # tools/. They pin the behaviour this package promises on its own.
 
 library(rgeoadaptels)
@@ -52,7 +52,7 @@ ok(n8 <= n4, "8-connectivity gives no more adaptels than 4")
 
 # Each metric on its own scale. `n >= 1` would pass even when a metric
 # collapses the raster into a single adaptel, which is how an inverted
-# cosine went unnoticed in plGeoAdaptels for two releases.
+# cosine went unnoticed in pygeoadaptels for two releases.
 for (spec in list(c("minkowski", "60"), c("cosine", "0.03"),
                   c("angular", "0.03"))) {
   n <- adaptels(d, threshold = as.numeric(spec[2]), distance = spec[1])$n_adaptels
@@ -114,7 +114,7 @@ ok(h$n_adaptels == 3L, "a hand-built split becomes two adaptels plus the other")
 ok(h$labels[2, 2] != h$labels[5, 5], "the two pieces get different ids")
 
 # A raster with nothing in it returns -1, not -9999, and that is deliberate
-# rather than an oversight here: plGeoAdaptels takes an early return in this
+# rather than an oversight here: pygeoadaptels takes an early return in this
 # case which skips the line that restores the original nodata marker, so a
 # raster holding one valid pixel comes back with -9999 while a raster holding
 # none comes back with -1. The inconsistency is upstream; replicating it is
@@ -122,7 +122,7 @@ ok(h$labels[2, 2] != h$labels[5, 5], "the two pieces get different ids")
 allnod <- matrix(-9999L, 4, 4)
 an <- enforce_connectivity(allnod)
 ok(an$n_adaptels == 0L && all(an$labels == -1L),
-   "an empty raster returns -1, matching plGeoAdaptels' early return")
+   "an empty raster returns -1, matching pygeoadaptels' early return")
 
 one <- matrix(-9999L, 4, 4); one[2, 2] <- 0L
 on <- enforce_connectivity(one)

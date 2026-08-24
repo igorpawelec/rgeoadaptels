@@ -7,7 +7,7 @@ the algorithm supplies their boundaries. It is a tool for delineating objects
 you have already inventoried — standing dead trees, in the case it was built
 for — not for finding new ones.
 
-This is the R twin of plGeoAdaptels' `grow_seeds`; the two produce identical
+This is the R twin of pygeoadaptels' `grow_seeds`; the two produce identical
 labels on identical input. The numbers below were measured on a 400×400,
 0.25 m CIELAB ortho (`SNP_21_2020_1_lab.tif`) with 36 hand-digitised
 dead-tree points (`dead_trees_test.shp`). Yours will differ; the shapes of the
@@ -24,7 +24,7 @@ own signature. `max_cost` caps it. So:
   clicked.
 - Feed CIELAB, not raw RGB. `max_cost` is only meaningful as a tolerance
   because CIELAB is perceptually near-uniform; a Euclidean step in RGB is not.
-  Convert with GeoPaletteR first.
+  Convert with rgeopalette first.
 
 ## Calibrate `max_cost` by sweeping it
 

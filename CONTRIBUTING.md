@@ -2,7 +2,7 @@
 
 rgeoadaptels segments rasters into adaptels (Achanta 2018) and SICLE
 superpixels (Belém 2023). It is the R twin of
-[plGeoAdaptels](https://github.com/igorpawelec/plGeoAdaptels); the two are
+[pygeoadaptels](https://github.com/igorpawelec/pygeoadaptels); the two are
 developed together and are meant to agree.
 
 Bug reports, ideas and pull requests are all welcome.
@@ -53,17 +53,17 @@ problems the tests cannot see.
 `man/` is generated. Edit the roxygen comments above the function in `R/`,
 then run `roxygen2::roxygenise()`; never edit a `.Rd` by hand.
 
-This is not a style preference. Every file in rHRG's `man/` once carried a
+This is not a style preference. Every file in rcacumen's `man/` once carried a
 hand-written header instead of roxygen2's marker, so `roxygenise()` silently
 skipped all of them and the directory drifted from the comments it claimed to
 come from. The only part `R CMD check` notices is argument defaults, via
 `codoc`; prose can be wrong indefinitely.
 
-## Agreement with plGeoAdaptels
+## Agreement with pygeoadaptels
 
 ```bash
-python3 tools/generate_plgeoadaptels_reference.py   # needs plgeoadaptels installed
-Rscript tools/cross_validate_against_plgeoadaptels.R
+python3 tools/generate_pygeoadaptels_reference.py   # needs pygeoadaptels installed
+Rscript tools/cross_validate_against_pygeoadaptels.R
 ```
 
 This is the one twin pair that is **bit-identical**, and it is worth keeping
@@ -80,14 +80,14 @@ alarm in this family three separate times.
 
 ## The pinned twin
 
-The agreement job installs plGeoAdaptels from a **tag**, not the tip of its main
+The agreement job installs pygeoadaptels from a **tag**, not the tip of its main
 branch — see `.github/workflows/R-CMD-check.yaml`. Unpinned, a commit in
-plGeoAdaptels could turn this repository's CI red without anything changing here,
+pygeoadaptels could turn this repository's CI red without anything changing here,
 and the failure would read as a defect in this package.
 
-The cost is that the pin goes stale. When plGeoAdaptels releases and the segmentation
+The cost is that the pin goes stale. When pygeoadaptels releases and the segmentation
 changes, bump the tag in the workflow and re-run the agreement job. A stale
-pin proves agreement against an old plGeoAdaptels, which is quieter than a red
+pin proves agreement against an old pygeoadaptels, which is quieter than a red
 build and therefore worse.
 
 ## Pull requests
@@ -105,10 +105,10 @@ build and therefore worse.
 
 The checklist exists because of a specific failure. `max_iters` changed
 default in 0.3.0, and that one change broke CI in both HRG twins at once —
-pyHRG with `int | None`, a runtime `TypeError` before Python 3.10, and rHRG
+pycacumen with `int | None`, a runtime `TypeError` before Python 3.10, and rcacumen
 with a `man/` page still documenting `200L`, which `R CMD check` reports as a
 codoc WARNING and the workflow treats as a failure. Neither was noticed.
-**pyHRG then tagged 0.3.0, 0.4.0 and 0.5.0 with the workflow red**; rHRG
+**pycacumen then tagged 0.3.0, 0.4.0 and 0.5.0 with the workflow red**; rcacumen
 shipped two the same way and rgeoadaptels two more.
 
 Local checks passed in every one of those cases. They were run on one R
@@ -116,7 +116,7 @@ version, on one operating system, by someone who already knew what the change
 was meant to do. The matrix is the part that disagrees.
 
 1. Update `NEWS.md`. If the output changes, say so in those words.
-2. **`roxygen2::roxygenise()`.** Skipping this is what broke rHRG: `man/`
+2. **`roxygen2::roxygenise()`.** Skipping this is what broke rcacumen: `man/`
    kept a default the code no longer had, and `?grow_crowns` told readers the
    cap was still there.
 3. Bump `Version:` in `DESCRIPTION`, and the version and `date-released` in

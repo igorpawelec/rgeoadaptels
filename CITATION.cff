@@ -32,17 +32,17 @@ references:
     journal: "Color and Imaging Conference (CIC26)"
     year: 2018
   - type: software
-    title: "plGeoAdaptels (original C implementation)"
+    title: "pygeoadaptels (original C implementation)"
     authors:
       - family-names: Netzel
         given-names: Paweł
     url: "https://github.com/pawelnetzel/plGeoAdaptels"
   - type: software
-    title: "plGeoAdaptels — the Python implementation of the same method"
+    title: "pygeoadaptels — the Python implementation of the same method"
     authors:
       - family-names: Pawelec
         given-names: Igor
-    url: "https://github.com/igorpawelec/plGeoAdaptels"
+    url: "https://github.com/igorpawelec/pygeoadaptels"
     notes: >-
       Results are bit-identical, verified by
-      tools/cross_validate_against_plgeoadaptels.R.
+      tools/cross_validate_against_pygeoadaptels.R.

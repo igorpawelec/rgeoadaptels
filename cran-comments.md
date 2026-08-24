@@ -35,5 +35,5 @@ is a Suggests used only by `read_bands()` and `adaptels_raster()`, and
 the segmentation itself runs on ordinary numeric arrays.
 
 `tools/` is excluded from the build via `.Rbuildignore`. It holds a
-cross-check against the plGeoAdaptels Python package, which needs Python
+cross-check against the pygeoadaptels Python package, which needs Python
 and so cannot run on a CRAN machine.

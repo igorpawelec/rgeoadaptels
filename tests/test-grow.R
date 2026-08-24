@@ -1,7 +1,7 @@
 # grow_seeds. Plain-R tests, no testthat dependency.
 #
 # The point->pixel contract is tested first and on its own (SPEC_grow_seeds
-# section 9.9): it is the one place this package and plGeoAdaptels can drift
+# section 9.9): it is the one place this package and pygeoadaptels can drift
 # silently. The same coordinate table is checked in the Python suite; here the
 # expected indices are the Python 0-based (row, col) + 1, because R seeds are
 # 1-based (matching sicle()).

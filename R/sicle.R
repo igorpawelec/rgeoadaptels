@@ -31,7 +31,7 @@
 #' bit-identical to 2, and 5 performs two removal steps rather than five.
 #' Belem et al. use 2 as a *speed* setting, and their reason is specific to
 #' the differential IFT they optimise, which this does not use. Measured on
-#' plGeoAdaptels, delineation at 2 was the worst of the values tried.
+#' pygeoadaptels, delineation at 2 was the worst of the values tried.
 #'
 #' Every label is a single 8-connected region. Do not pass these to
 #' [enforce_connectivity()]: it tests 4-connectivity, which is the adaptel
@@ -40,15 +40,15 @@
 #'
 #' @section Seeds and reproducibility:
 #' With `seeds = NULL` the starting seeds are drawn with R's own RNG, so
-#' `set.seed()` controls them. They will not match plGeoAdaptels, which
+#' `set.seed()` controls them. They will not match pygeoadaptels, which
 #' draws with NumPy: `Generator.choice` cannot be reproduced outside NumPy,
 #' and reimplementing an undocumented ordering detail of a third-party
-#' library is what left rHRG disagreeing with `scikit-image`'s watershed.
+#' library is what left rcacumen disagreeing with `scikit-image`'s watershed.
 #'
 #' The sampling is not part of the algorithm -- Belem et al. call it a free
 #' choice -- so `seeds` exists to take it out of the comparison. Hand both
 #' implementations the same seeds and the rest agrees exactly; that is what
-#' `tools/cross_validate_against_plgeoadaptels.R` does.
+#' `tools/cross_validate_against_pygeoadaptels.R` does.
 #'
 #' @examples
 #' d <- array(runif(3 * 60 * 60, 0, 255), dim = c(3, 60, 60))

@@ -71,7 +71,7 @@ operator supplies the objects and the algorithm supplies their boundaries.
 \details{
 The growth is the SICLE IFT core called once, with every seed, and no seed
 is ever removed, so `labels == i` is exactly the region grown from the
-`i`-th seed and `-1` is unassigned. This is the R twin of plGeoAdaptels'
+`i`-th seed and `-1` is unassigned. This is the R twin of pygeoadaptels'
 `grow_seeds`; the two produce identical labels on identical input.
 }
 \examples{

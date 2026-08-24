@@ -26,7 +26,7 @@ Invisibly, the list [adaptels()] returns.
 Segment a raster and write the labels
 }
 \details{
-Nodata is written as `-9999`, matching plGeoAdaptels, and set as the
+Nodata is written as `-9999`, matching pygeoadaptels, and set as the
 raster's NA value so that terra and GDAL both read it back as missing
 rather than as an adaptel numbered minus nine thousand.
 

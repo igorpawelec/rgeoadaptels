@@ -3,7 +3,7 @@
  * 1-based, as in the Python this is ported from, so the sift arithmetic is
  * the same expression rather than a translated one. Slot 0 is unused.
  *
- * Grows rather than caps. plGeoAdaptels capped both of its heaps and wrote
+ * Grows rather than caps. pygeoadaptels capped both of its heaps and wrote
  * the pixel's label and cost *before* checking capacity, so an overflow
  * marked a pixel conquered that never propagated. That fired in SICLE --
  * 83 lost pixels on a 1200x1200 raster -- and was one insert away from

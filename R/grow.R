@@ -7,10 +7,10 @@
 # stays frozen so this twin and the Python one share one verified algorithm and
 # differ only in this wrapper -- see docs/SPEC_grow_seeds.md section 3.
 #
-# Every step here mirrors plgeoadaptels/grow.py operation for operation and in
+# Every step here mirrors pygeoadaptels/grow.py operation for operation and in
 # the same order (weights, then the seed-window median on the weighted buffer,
 # then the coordinate bands), because the two must agree bit for bit -- that is
-# what tools/cross_validate_against_plgeoadaptels.R checks.
+# what tools/cross_validate_against_pygeoadaptels.R checks.
 #
 # Copyright (C) 2026 Igor Pawelec. Licence: GPLv3.
 
@@ -98,7 +98,7 @@
 #'
 #' The growth is the SICLE IFT core called once, with every seed, and no seed
 #' is ever removed, so `labels == i` is exactly the region grown from the
-#' `i`-th seed and `-1` is unassigned. This is the R twin of plGeoAdaptels'
+#' `i`-th seed and `-1` is unassigned. This is the R twin of pygeoadaptels'
 #' `grow_seeds`; the two produce identical labels on identical input.
 #'
 #' @param data Numeric matrix `(rows, cols)` for one band, or array

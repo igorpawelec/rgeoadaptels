@@ -1,7 +1,7 @@
 # The version must be one number, not three that agree by hand.
 #
-# Ported from rHRG, where CITATION.cff sat two releases behind DESCRIPTION,
-# and from GeoPalette, where __version__ was two behind pyproject.toml. Both
+# Ported from rcacumen, where CITATION.cff sat two releases behind DESCRIPTION,
+# and from pygeopalette, where __version__ was two behind pyproject.toml. Both
 # times the bump edited the places someone remembered instead of searching
 # for the old number, and one of the two fixes searched for a string the file
 # had never contained, so it silently changed nothing. The CITATION is what a

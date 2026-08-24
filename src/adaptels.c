@@ -1,7 +1,7 @@
 /* Scale-Adaptive Superpixels (Adaptels).
  *
  * Achanta, Marquez-Neila, Fua and Susstrunk, "Scale-Adaptive Superpixels",
- * Color and Imaging Conference, 2018. Ported from the plGeoAdaptels Python
+ * Color and Imaging Conference, 2018. Ported from the pygeoadaptels Python
  * package, itself a reimplementation of Pawel Netzel's original C.
  *
  * Kept deliberately close to the Python, statement for statement, so the two
@@ -16,7 +16,7 @@
  *     size) C-order rather than an R matrix's column-major layout;
  *   - the heap is 1-based, as in the Python, so the sift arithmetic is the
  *     same expression and not a translated one;
- *   - both buffers grow rather than cap. plGeoAdaptels capped seeds at
+ *   - both buffers grow rather than cap. pygeoadaptels capped seeds at
  *     100000 until 0.5.0 and discarded the rest in silence, which changed
  *     27% of the partition on a 1200x1200 scene.
  *
@@ -58,7 +58,7 @@ static double calc_distance(const double *layers, int n_layers,
             /* cosine DISTANCE, not similarity: the bare ratio is 1.0 for
              * identical spectra and falls towards 0 as they diverge, which
              * is backwards for something compared against a growth
-             * threshold. plGeoAdaptels shipped it inverted until 0.3.0. */
+             * threshold. pygeoadaptels shipped it inverted until 0.3.0. */
             dist = 1.0 - val;
         } else {
             if (val > 1.0) val = 1.0;

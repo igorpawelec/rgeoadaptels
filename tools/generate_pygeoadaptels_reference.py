@@ -1,11 +1,11 @@
-"""Write reference segmentations from plGeoAdaptels.
+"""Write reference segmentations from pygeoadaptels.
 
-    pip install plgeoadaptels
-    python3 tools/generate_plgeoadaptels_reference.py
+    pip install pygeoadaptels
+    python3 tools/generate_pygeoadaptels_reference.py
 
 Synthetic scenes only, so this runs on a machine that has no raster data.
 The agreement was also checked locally against the real 400x400 three-band
-scene in the plGeoAdaptels repository, which cannot be shipped here.
+scene in the pygeoadaptels repository, which cannot be shipped here.
 
 Covers every parameter path, because the ones left out are exactly the ones
 that drift: connectivity 4 and 8, all three metrics on their own scales, a
@@ -17,8 +17,8 @@ Copyright (C) 2026 Igor Pawelec. Licence: GPLv3.
 import os
 
 import numpy as np
-from plgeoadaptels import adaptels_from_array, enforce_connectivity
-from plgeoadaptels.sicle import sicle_from_array
+from pygeoadaptels import adaptels_from_array, enforce_connectivity
+from pygeoadaptels.sicle import sicle_from_array
 
 OUT = os.path.join("tools", "reference")
 os.makedirs(OUT, exist_ok=True)
@@ -84,7 +84,7 @@ for ms in (0, 5, 20):
 #
 # Seeds are written out and handed to both implementations. NumPy's
 # Generator.choice cannot be reproduced outside NumPy, so the sampler stays
-# out of the comparison and the algorithm stays in it. plGeoAdaptels grew a
+# out of the comparison and the algorithm stays in it. pygeoadaptels grew a
 # `seeds` argument in 0.6.0 for exactly this.
 sicle_rng = np.random.default_rng(23)
 sc = SCENES["multi"]
@@ -136,7 +136,7 @@ for tag, kw in SICLE_CASES:
 # can drift. Seeds are drawn from the *valid* pixels of the mask, so the same
 # set is legal with and without it, and are 0-based (row, col) -- the R side
 # adds one.
-from plgeoadaptels.grow import grow_seeds
+from pygeoadaptels.grow import grow_seeds
 
 grow_rng = np.random.default_rng(29)
 valid_flat = np.where(mask.ravel() == 0)[0]
@@ -181,6 +181,6 @@ np.savetxt(os.path.join(OUT, "mask.csv"), mask, delimiter=",", fmt="%d")
 with open(os.path.join(OUT, "cases.csv"), "w") as fh:
     fh.write("\n".join(lines) + "\n")
 
-import plgeoadaptels
-print("\nplgeoadaptels %s, %d cases written to %s/"
-      % (plgeoadaptels.__version__, len(lines), OUT))
+import pygeoadaptels
+print("\npygeoadaptels %s, %d cases written to %s/"
+      % (pygeoadaptels.__version__, len(lines), OUT))

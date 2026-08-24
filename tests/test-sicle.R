@@ -1,6 +1,6 @@
 # SICLE. Plain-R tests, no testthat dependency.
 #
-# These do not compare against plGeoAdaptels -- that needs Python and lives
+# These do not compare against pygeoadaptels -- that needs Python and lives
 # in tools/. They pin what this package promises on its own.
 
 library(rgeoadaptels)

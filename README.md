@@ -12,9 +12,9 @@ R and plain C. No Rcpp, no required packages, and `terra` only if you want to
 read files.
 
 > **Python users:** the same algorithm is in
-> [plGeoAdaptels](https://github.com/igorpawelec/plGeoAdaptels). The two are
+> [pygeoadaptels](https://github.com/igorpawelec/pygeoadaptels). The two are
 > separate repositories because their tooling and idioms do not mix, but they
-> are **bit-identical** — see [Agreement](#agreement-with-plgeoadaptels).
+> are **bit-identical** — see [Agreement](#agreement-with-pygeoadaptels).
 
 ## Install
 
@@ -130,14 +130,14 @@ recipe for dead trees.
 It runs on the same frozen IFT kernel as `sicle`, which is what keeps it
 bit-identical to the Python twin.
 
-## Agreement with plGeoAdaptels
+## Agreement with pygeoadaptels
 
 Bit-identical, and checked rather than asserted:
 
 ```sh
-pip install plgeoadaptels
-python3 tools/generate_plgeoadaptels_reference.py
-Rscript tools/cross_validate_against_plgeoadaptels.R
+pip install pygeoadaptels
+python3 tools/generate_pygeoadaptels_reference.py
+Rscript tools/cross_validate_against_pygeoadaptels.R
 ```
 
 Thirty cases across all three algorithms — every adaptels metric and both
@@ -146,15 +146,15 @@ with an interior hole, single- and multi-band input, a constant raster,
 `enforce_connectivity` at three `min_size` values, SICLE across its parameters
 and a saliency map, and `grow_seeds` across every option including the
 `fill_holes` cleanup. Zero differing pixels in all of them. The real 400x400
-three-band scene in the plGeoAdaptels repository — and the CIELAB dead-tree
+three-band scene in the pygeoadaptels repository — and the CIELAB dead-tree
 ortho with 36 hand-placed points — were checked the same way locally; they are
 not shipped here.
 
 The check is an **equality**, not a tolerance, and that is worth a note
-because the other twin pairs in this family could not manage it. rHRG
+because the other twin pairs in this family could not manage it. rcacumen
 reimplements `scikit-image`'s watershed and differs on 0.25 % of pixels where
-plateau ties fall differently. GeoPaletteR computes in double where
-GeoPalette stores single precision. Neither problem exists here: this is a
+plateau ties fall differently. rgeopalette computes in double where
+pygeopalette stores single precision. Neither problem exists here: this is a
 port of the same kernel — same heap, same neighbour order, same arithmetic —
 so there is no second implementation to disagree with, and anything short of
 identical would be a bug.

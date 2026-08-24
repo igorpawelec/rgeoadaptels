@@ -1,5 +1,5 @@
 # R CMD check across the platforms CRAN builds on, plus the cross-check
-# against plGeoAdaptels.
+# against pygeoadaptels.
 #
 # The package compiles C, so the matrix is about compiler and R-version
 # drift as well as dependencies. oldrel-1 is here because DESCRIPTION
@@ -65,12 +65,12 @@ jobs:
           error-on: '"warning"'
           upload-snapshots: true
 
-  identical-to-plgeoadaptels:
+  identical-to-pygeoadaptels:
     # An equality check, not a tolerance. This is a port of the same kernel,
     # so a single differing pixel is a bug rather than a difference of
     # opinion, and the script exits non-zero on one.
     runs-on: ubuntu-latest
-    name: identical to plGeoAdaptels
+    name: identical to pygeoadaptels
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -90,20 +90,20 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install plGeoAdaptels
+      - name: Install pygeoadaptels
         # Pinned to a tag, not the tip of main. Unpinned, a commit in
-        # plGeoAdaptels could turn this job red without anything changing
+        # pygeoadaptels could turn this job red without anything changing
         # here, and the failure would look like a defect in rgeoadaptels.
         # This pair is bit-identical, so the job is unusually sensitive:
         # any upstream change to the growing shows up as a hard failure.
         #
-        # BUMP THIS when plGeoAdaptels releases and the segmentation
+        # BUMP THIS when pygeoadaptels releases and the segmentation
         # changes. A stale pin proves the agreement against an old
-        # plGeoAdaptels, which is quieter than a red build: see
+        # pygeoadaptels, which is quieter than a red build: see
         # CONTRIBUTING.md.
         #
-        # From git rather than PyPI because plGeoAdaptels is not published;
-        # `pip install plgeoadaptels[connectivity]==0.8.0` replaces this
+        # From git rather than PyPI because pygeoadaptels is not published;
+        # `pip install pygeoadaptels[connectivity]==0.8.0` replaces this
         # once it is.
         #
         # The [connectivity] extra is scipy, and it is needed because the
@@ -116,7 +116,7 @@ jobs:
         # case and then fail on the first connectivity one.
         run: |
           python -m pip install --upgrade pip
-          python -m pip install "plgeoadaptels[connectivity] @ git+https://github.com/igorpawelec/plGeoAdaptels.git@v0.9.0"
+          python -m pip install "pygeoadaptels[connectivity] @ git+https://github.com/igorpawelec/pygeoadaptels.git@v0.9.0"
 
       - name: Check the version declarations agree
         # CITATION.cff is .Rbuildignore'd, so R CMD check never sees it.
@@ -126,7 +126,7 @@ jobs:
         run: R CMD INSTALL .
 
       - name: Generate reference segmentations
-        run: python tools/generate_plgeoadaptels_reference.py
+        run: python tools/generate_pygeoadaptels_reference.py
 
       - name: Compare
-        run: Rscript tools/cross_validate_against_plgeoadaptels.R
+        run: Rscript tools/cross_validate_against_pygeoadaptels.R

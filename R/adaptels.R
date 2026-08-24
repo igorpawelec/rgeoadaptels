@@ -1,7 +1,7 @@
 DISTANCES <- c(minkowski = 0L, cosine = 1L, angular = 2L)
 
 # Both entry points check the same things, and they check them here so they
-# cannot drift apart. plGeoAdaptels shipped with adaptels_from_array()
+# cannot drift apart. pygeoadaptels shipped with adaptels_from_array()
 # quietly falling back to minkowski on an unrecognised distance while
 # create_adaptels() raised on the same input.
 .validate <- function(threshold, distance, minkowski_p) {

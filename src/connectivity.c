@@ -1,6 +1,6 @@
 /* Split adaptels that are not single connected regions.
  *
- * Ported from plGeoAdaptels, which builds this on scipy.ndimage. Three
+ * Ported from pygeoadaptels, which builds this on scipy.ndimage. Three
  * details decide whether the two produce the same ids, and none of them is
  * visible from the docstring:
  *
