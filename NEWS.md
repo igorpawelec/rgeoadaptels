@@ -1,5 +1,13 @@
 # rgeoadaptels 0.2.0
 
+
+# rgeoadaptels 0.4.0
+
+## Changed
+
+* The cross-check now installs its Python twin from the tag that carries the renamed package.
+
+
 # rgeoadaptels 0.3.1
 
 ## Fixed
