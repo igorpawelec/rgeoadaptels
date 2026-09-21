@@ -11,7 +11,7 @@ authors:
 repository-code: "https://github.com/igorpawelec/rgeoadaptels"
 license: GPL-3.0-or-later
 version: "0.4.0"
-date-released: "2026-07-21"
+date-released: "2026-08-24"
 keywords:
   - superpixels
   - image segmentation
